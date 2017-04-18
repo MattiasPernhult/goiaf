@@ -3,7 +3,9 @@
 // license that can be found in the LICENSE file.
 
 /*
-Package goiaf provides an HTTP wrapper around An API Of Ice And Fire (https://anapioficeandfire.com)
+Package goiaf provides an HTTP wrapper around An API Of Ice And Fire (https://anapioficeandfire.com).
+
+
 This API includes all the data from the universe of Ice And Fire you've ever wanted, created by https://github.com/joakimskoog
 
 	client := goiaf.NewClient()
