@@ -9,14 +9,25 @@ import (
 	"time"
 )
 
+// BookRequest contains method which can be used to filter the response.
 type BookRequest interface {
 	ParamConverter
 
+	// Name can be used to filter the books by name.
 	Name(string) BookRequest
+
+	// FromReleaseDate can be used to only return books released
+	// after the argument date. This method will format the date
+	// after the time.RFC3339.
 	FromReleaseDate(time.Time) BookRequest
+
+	// FromReleaseDate can be used to only return books released
+	// before the argument date. This method will format the date
+	// after the time.RFC3339.
 	ToReleaseDate(time.Time) BookRequest
 }
 
+// NewBookRequest returns a new BookRequest which can be used to filter books.
 func NewBookRequest() BookRequest {
 	return bookRequest{}
 }

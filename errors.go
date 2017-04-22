@@ -7,5 +7,6 @@ package goiaf
 import "errors"
 
 var (
+	// ErrResourceNotFound will be used if the response from the api has 404 as HTTP status.
 	ErrResourceNotFound = errors.New("Resource not found")
 )

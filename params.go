@@ -13,5 +13,8 @@ import "net/url"
 // and they can be passed to the method of the client, which performs the
 // api request.
 type ParamConverter interface {
+
+	// Convert returns the type url.Values which will be used
+	// to retrieve the parameters and encode them.
 	Convert() url.Values
 }

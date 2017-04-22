@@ -18,6 +18,7 @@ type DateTime struct {
 	time.Time
 }
 
+// UnmarshalJSON makes the DateTime type implement the json.Unmarshaller interface.
 func (dt *DateTime) UnmarshalJSON(data []byte) error {
 	var t string
 	err := json.Unmarshal(data, &t)

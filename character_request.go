@@ -9,17 +9,33 @@ import (
 	"strconv"
 )
 
+// CharacterRequest contains method which can be used to filter the response.
 type CharacterRequest interface {
 	ParamConverter
 
+	// Name can be used to filter the returned characters by their name.
 	Name(string) CharacterRequest
+
+	// Gender filters the result based on gender. Possible values are Female, Male or Unknown.
 	Gender(string) CharacterRequest
+
+	// Culture sets the culture for the request. Only characters with the given
+	// culture are included in the response.
 	Culture(string) CharacterRequest
+
+	// Born can be used to filter characters that was born the given year.
 	Born(string) CharacterRequest
+
+	// Died can be used to filter characters that died the given year.
 	Died(string) CharacterRequest
+
+	// IsAlive only returns characters that are alive or dead, depending on the
+	// given argument value. Does not have a default value, so the response will
+	// include characters that are dead and alive.
 	IsAlive(bool) CharacterRequest
 }
 
+// NewCharacterRequest returns a new CharacterRequest which can be used to filter books.
 func NewCharacterRequest() CharacterRequest {
 	return characterRequest{}
 }

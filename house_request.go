@@ -9,19 +9,43 @@ import (
 	"strconv"
 )
 
+// HouseRequest contains method which can be used to filter the response.
 type HouseRequest interface {
 	ParamConverter
 
+	// Name can be used to filter the returned houses by their name.
 	Name(string) HouseRequest
+
+	// Region sets the value for the region parameter.
+	// Only houses that belong in the given region are included in the response.
 	Region(string) HouseRequest
+
+	// Words sets the value for the words parameter.
+	// Only houses that has the given words are included in the response.
 	Words(string) HouseRequest
+
+	// HasWords sets the value for the hasWords parameter.
+	// Only houses that have words are included in the response.
 	HasWords(bool) HouseRequest
+
+	// HasTitles sets the value for the hasTitles parameter.
+	// Only houses that have titles are included in the response.
 	HasTitles(bool) HouseRequest
+
+	// HasSeats sets the value for the hasSeats parameter.
+	// Only houses that have seats are included in the response.
 	HasSeats(bool) HouseRequest
+
+	// HasDiedOut sets the value for the hasDiedOut parameter.
+	// Only houses that are extinct are included in the response.
 	HasDiedOut(bool) HouseRequest
+
+	// HasAncestralWeapons sets the value for the hasAncestralWeapons parameter.
+	// Only houses that have ancestral weapons are included in the response.
 	HasAncestralWeapons(bool) HouseRequest
 }
 
+// NewHouseRequest returns a new HouseRequest which can be used to filter books.
 func NewHouseRequest() HouseRequest {
 	return houseRequest{}
 }
