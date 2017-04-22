@@ -20,29 +20,29 @@ type BookResponse struct {
 
 // Next returns a BookRequest, which can be used to retrieve
 // the next result set of books.
-func (response *BookResponse) Next() (BookRequest, error) {
+func (response BookResponse) Next() (BookRequest, error) {
 	return response.getRequestForURL(response.links["next"])
 }
 
 // Prev returns a BookRequest, which can be used to retrieve
 // the previous result set of books.
-func (response *BookResponse) Prev() (BookRequest, error) {
+func (response BookResponse) Prev() (BookRequest, error) {
 	return response.getRequestForURL(response.links["prev"])
 }
 
 // First returns a BookRequest, which can be used to retrieve
 // the last result set of books.
-func (response *BookResponse) First() (BookRequest, error) {
+func (response BookResponse) First() (BookRequest, error) {
 	return response.getRequestForURL(response.links["first"])
 }
 
 // Last returns a BookRequest, which can be used to retrieve
 // the first result set of books.
-func (response *BookResponse) Last() (BookRequest, error) {
+func (response BookResponse) Last() (BookRequest, error) {
 	return response.getRequestForURL(response.links["last"])
 }
 
-func (response *BookResponse) getRequestForURL(urlStr string) (BookRequest, error) {
+func (response BookResponse) getRequestForURL(urlStr string) (BookRequest, error) {
 	query, err := getQueryFromURL(urlStr)
 	if err != nil {
 		return nil, err
