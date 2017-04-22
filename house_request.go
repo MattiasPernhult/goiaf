@@ -48,7 +48,7 @@ type HouseRequest interface {
 	HasAncestralWeapons(bool) HouseRequest
 }
 
-// NewHouseRequest returns a new HouseRequest which can be used to filter books.
+// NewHouseRequest returns a new HouseRequest which can be used to filter houses.
 func NewHouseRequest() HouseRequest {
 	h := houseRequest{}
 	h.limit = 10

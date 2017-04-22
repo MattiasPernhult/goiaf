@@ -6,11 +6,18 @@ package goiaf
 
 import "strconv"
 
+// HouseResponse contains the data from the performed request.
+//
+// HouseResponse supports pagination by having four methods: Next(), Prev(), First() and Last().
+// These methods will return a HouseRequest, already formatted like the previous request you used, except
+// the request will return a different result set.
+//
+// Note that, if a result set is not available these methods will return the ErrNoResultSet error.
 type HouseResponse struct {
-	links map[string]string
-
 	// Data contains the houses from the request.
 	Data []House
+
+	links map[string]string
 }
 
 // Next returns a HouseRequest, which can be used to retrieve

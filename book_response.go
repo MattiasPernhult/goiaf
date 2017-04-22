@@ -4,11 +4,18 @@
 
 package goiaf
 
+// BookResponse contains the data from the performed request.
+//
+// BookResponse supports pagination by having four methods: Next(), Prev(), First() and Last().
+// These methods will return a BookRequest, already formatted like the previous request you used, except
+// the request will return a different result set.
+//
+// Note that, if a result set is not available these methods will return the ErrNoResultSet error.
 type BookResponse struct {
-	links map[string]string
-
 	// Data contains the books from the request.
 	Data []Book
+
+	links map[string]string
 }
 
 // Next returns a BookRequest, which can be used to retrieve

@@ -6,11 +6,18 @@ package goiaf
 
 import "strconv"
 
+// CharacterResponse contains the data from the performed request.
+//
+// CharacterResponse supports pagination by having four methods: Next(), Prev(), First() and Last().
+// These methods will return a CharacterRequest, already formatted like the previous request you used, except
+// the request will return a different result set.
+//
+// Note that, if a result set is not available these methods will return the ErrNoResultSet error.
 type CharacterResponse struct {
-	links map[string]string
-
 	// Data contains the characters from the request.
 	Data []Character
+
+	links map[string]string
 }
 
 func (response *CharacterResponse) getRequestForURL(urlStr string) (CharacterRequest, error) {

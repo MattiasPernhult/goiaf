@@ -38,7 +38,7 @@ type CharacterRequest interface {
 	IsAlive(bool) CharacterRequest
 }
 
-// NewCharacterRequest returns a new CharacterRequest which can be used to filter books.
+// NewCharacterRequest returns a new CharacterRequest which can be used to filter characters.
 func NewCharacterRequest() CharacterRequest {
 	c := characterRequest{}
 	c.limit = 10

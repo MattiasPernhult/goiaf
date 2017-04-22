@@ -24,7 +24,7 @@ type Client interface {
 	// parameters are exposed by the BookRequest interface.
 	Books(BookRequest) (BookResponse, error)
 
-	// Returns a specific book based on the id.
+	// Returns a specific book based on the given id.
 	Book(int) (Book, error)
 
 	// Returns all characters from the api. There is also the possibility
@@ -32,7 +32,7 @@ type Client interface {
 	// parameters are exposed by the CharacterRequest interface.
 	Characters(CharacterRequest) (CharacterResponse, error)
 
-	// Return a specific character based on the id.
+	// Return a specific character based on the given id.
 	Character(int) (Character, error)
 
 	// Returns all houses from the api. There is also the possibility
@@ -40,7 +40,7 @@ type Client interface {
 	// parameters are exposed by the HouseRequest interface.
 	Houses(HouseRequest) (HouseResponse, error)
 
-	// Return a specific house based on the id.
+	// Return a specific house based on the given id.
 	House(int) (House, error)
 }
 

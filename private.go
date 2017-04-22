@@ -6,7 +6,6 @@ package goiaf
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -73,7 +72,7 @@ func (c *client) getLinks(linkHeader string) map[string]string {
 
 func getQueryFromURL(urlStr string) (url.Values, error) {
 	if urlStr == "" {
-		return nil, errors.New("REPLACE THIS LATER, NO RELATION")
+		return nil, ErrNoResultSet
 	}
 
 	u, err := url.ParseRequestURI(urlStr)
@@ -87,7 +86,7 @@ func getQueryFromURL(urlStr string) (url.Values, error) {
 func getPageInfo(query url.Values) (int, int, error) {
 	pageStr, pageSizeStr := query.Get("page"), query.Get("pageSize")
 	if pageStr == "" || pageSizeStr == "" {
-		return 0, 0, errors.New("PAGE SIZE AND PAGE ARE MISSING")
+		return 0, 0, ErrPaginationInfoMissing
 	}
 
 	page, err := strconv.Atoi(pageStr)

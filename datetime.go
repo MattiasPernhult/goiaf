@@ -13,12 +13,13 @@ import (
 
 var unmarshalDTLayout = "2006-01-02T15:04:05"
 
-// Date is a wrapper around time.Time.
+// Date is a wrapper around time.Time to be able to do proper format for the value.
 type DateTime struct {
 	time.Time
 }
 
 // UnmarshalJSON makes the DateTime type implement the json.Unmarshaller interface.
+// It will parse the date according to the ISO 8601 standard.
 func (dt *DateTime) UnmarshalJSON(data []byte) error {
 	var t string
 	err := json.Unmarshal(data, &t)
