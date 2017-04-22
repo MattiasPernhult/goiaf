@@ -9,21 +9,30 @@ import "strconv"
 type HouseResponse struct {
 	links map[string]string
 
+	// Data contains the houses from the request.
 	Data []House
 }
 
+// Next returns a HouseRequest, which can be used to retrieve
+// the next result set of houses.
 func (response *HouseResponse) Next() (HouseRequest, error) {
 	return response.getRequestForURL(response.links["next"])
 }
 
+// Prev returns a HouseRequest, which can be used to retrieve
+// the previous result set of houses.
 func (response *HouseResponse) Prev() (HouseRequest, error) {
 	return response.getRequestForURL(response.links["prev"])
 }
 
+// First returns a HouseRequest, which can be used to retrieve
+// the last result set of houses.
 func (response *HouseResponse) First() (HouseRequest, error) {
 	return response.getRequestForURL(response.links["first"])
 }
 
+// Last returns a HouseRequest, which can be used to retrieve
+// the first result set of houses.
 func (response *HouseResponse) Last() (HouseRequest, error) {
 	return response.getRequestForURL(response.links["last"])
 }

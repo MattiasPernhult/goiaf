@@ -4,22 +4,7 @@
 
 package goiaf
 
-type Request interface {
-	Limit(int) Request
-	Page(int) Request
-}
-
 type request struct {
 	limit int
 	page  *int
-}
-
-func (r request) Limit(value int) Request {
-	r.limit = value
-	return r
-}
-
-func (r request) Page(value int) Request {
-	r.page = &value
-	return r
 }

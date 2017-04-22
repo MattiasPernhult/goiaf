@@ -7,21 +7,30 @@ package goiaf
 type BookResponse struct {
 	links map[string]string
 
+	// Data contains the books from the request.
 	Data []Book
 }
 
+// Next returns a BookRequest, which can be used to retrieve
+// the next result set of books.
 func (response *BookResponse) Next() (BookRequest, error) {
 	return response.getRequestForURL(response.links["next"])
 }
 
+// Prev returns a BookRequest, which can be used to retrieve
+// the previous result set of books.
 func (response *BookResponse) Prev() (BookRequest, error) {
 	return response.getRequestForURL(response.links["prev"])
 }
 
+// First returns a BookRequest, which can be used to retrieve
+// the last result set of books.
 func (response *BookResponse) First() (BookRequest, error) {
 	return response.getRequestForURL(response.links["first"])
 }
 
+// Last returns a BookRequest, which can be used to retrieve
+// the first result set of books.
 func (response *BookResponse) Last() (BookRequest, error) {
 	return response.getRequestForURL(response.links["last"])
 }

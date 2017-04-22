@@ -9,6 +9,7 @@ import "strconv"
 type CharacterResponse struct {
 	links map[string]string
 
+	// Data contains the characters from the request.
 	Data []Character
 }
 
@@ -53,18 +54,26 @@ func (response *CharacterResponse) getRequestForURL(urlStr string) (CharacterReq
 	return request, nil
 }
 
+// Next returns a CharacterRequest, which can be used to retrieve
+// the next result set of characters.
 func (response *CharacterResponse) Next() (CharacterRequest, error) {
 	return response.getRequestForURL(response.links["next"])
 }
 
+// Prev returns a CharacterRequest, which can be used to retrieve
+// the previous result set of characters.
 func (response *CharacterResponse) Prev() (CharacterRequest, error) {
 	return response.getRequestForURL(response.links["prev"])
 }
 
+// First returns a CharacterRequest, which can be used to retrieve
+// the last result set of characters.
 func (response *CharacterResponse) First() (CharacterRequest, error) {
 	return response.getRequestForURL(response.links["first"])
 }
 
+// Last returns a CharacterRequest, which can be used to retrieve
+// the first result set of characters.
 func (response *CharacterResponse) Last() (CharacterRequest, error) {
 	return response.getRequestForURL(response.links["last"])
 }
