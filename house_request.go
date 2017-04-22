@@ -13,6 +13,9 @@ import (
 type HouseRequest interface {
 	ParamConverter
 
+	// Limit sets the maximum houses to return.
+	Limit(int) HouseRequest
+
 	// Name can be used to filter the returned houses by their name.
 	Name(string) HouseRequest
 
@@ -47,10 +50,14 @@ type HouseRequest interface {
 
 // NewHouseRequest returns a new HouseRequest which can be used to filter books.
 func NewHouseRequest() HouseRequest {
-	return houseRequest{}
+	h := houseRequest{}
+	h.limit = 10
+	return h
 }
 
 type houseRequest struct {
+	request
+
 	name                *string
 	region              *string
 	words               *string
@@ -61,9 +68,18 @@ type houseRequest struct {
 	hasAncestralWeapons *bool
 }
 
+func (request houseRequest) Limit(value int) HouseRequest {
+	request.limit = value
+	return request
+}
+
 func (request houseRequest) Convert() url.Values {
 	params := url.Values{}
+	params.Add("page", strconv.Itoa(request.limit))
 
+	if request.page != nil {
+		params.Set("pageSize", strconv.Itoa(*request.page))
+	}
 	if request.name != nil {
 		params.Set("name", *request.name)
 	}

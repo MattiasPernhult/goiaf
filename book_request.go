@@ -6,12 +6,16 @@ package goiaf
 
 import (
 	"net/url"
+	"strconv"
 	"time"
 )
 
 // BookRequest contains method which can be used to filter the response.
 type BookRequest interface {
 	ParamConverter
+
+	// Limit sets the maximum books to return.
+	Limit(int) BookRequest
 
 	// Name can be used to filter the books by name.
 	Name(string) BookRequest
@@ -29,13 +33,22 @@ type BookRequest interface {
 
 // NewBookRequest returns a new BookRequest which can be used to filter books.
 func NewBookRequest() BookRequest {
-	return bookRequest{}
+	b := bookRequest{}
+	b.limit = 10
+	return b
 }
 
 type bookRequest struct {
+	request
+
 	name            *string
 	fromReleaseDate *string
 	toReleaseDate   *string
+}
+
+func (request bookRequest) Limit(value int) BookRequest {
+	request.limit = value
+	return request
 }
 
 func (request bookRequest) Name(value string) BookRequest {
@@ -57,7 +70,11 @@ func (request bookRequest) ToReleaseDate(value time.Time) BookRequest {
 
 func (request bookRequest) Convert() url.Values {
 	params := url.Values{}
+	params.Add("page", strconv.Itoa(request.limit))
 
+	if request.page != nil {
+		params.Set("pageSize", strconv.Itoa(*request.page))
+	}
 	if request.name != nil {
 		params.Set("name", *request.name)
 	}

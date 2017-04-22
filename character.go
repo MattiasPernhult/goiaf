@@ -4,6 +4,8 @@
 
 package goiaf
 
+import "encoding/json"
+
 type Character struct {
 	// The hypermedia URL of this resource.
 	URL string
@@ -39,7 +41,7 @@ type Character struct {
 	// The character id of this character's spouse.
 	SpouseId int
 
-	// An array of House ids that this character is loyal to.
+	// An array of Houses ids that this character is loyal to.
 	AllegianceIds []int
 
 	// An array of Book ids that this character has been in.
@@ -55,11 +57,6 @@ type Character struct {
 	// An array of actor names that has played this character in
 	// the TV show Game Of Thrones.
 	PlayedBy []string
-}
-
-type CharacterResponse struct {
-	// TODO: add links functionality to next, prev, first, last
-	Data []Character
 }
 
 type character struct {
@@ -104,12 +101,24 @@ func (c character) Convert() Character {
 	return character
 }
 
-type charactersResponse []character
+type charactersResponse struct {
+	links map[string]string
+
+	Characters []character
+}
+
+func (charactersResponse *charactersResponse) Link(links map[string]string) {
+	charactersResponse.links = links
+}
+
+func (charactersResponse *charactersResponse) UnmarshalJSON(data []byte) error {
+	return json.Unmarshal(data, &charactersResponse.Characters)
+}
 
 func (charactersResponse charactersResponse) Convert() []Character {
 	characters := []Character{}
 
-	for _, characterResponse := range charactersResponse {
+	for _, characterResponse := range charactersResponse.Characters {
 		characters = append(characters, characterResponse.Convert())
 	}
 

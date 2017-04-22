@@ -47,7 +47,7 @@ This API includes all the data from the universe of Ice And Fire you've ever wan
 	checkErr(err)
 	fmt.Printf("%+v\n", houses)
 
-	house, err := client.House(378)
+	house, err := client.Houses(378)
 	checkErr(err)
 	fmt.Printf("%+v\n", house)
 */

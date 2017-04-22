@@ -4,6 +4,8 @@
 
 package goiaf
 
+import "encoding/json"
+
 type House struct {
 	// The hypermedia URL of this resource.
 	URL string
@@ -32,7 +34,7 @@ type House struct {
 	// The Character id of this house's heir.
 	HeirId int
 
-	// The House id that this house answers to.
+	// The Houses id that this house answers to.
 	OverlordId int
 
 	// The year that this house was founded.
@@ -47,16 +49,11 @@ type House struct {
 	// An array of names of the noteworthy weapons that this house owns.
 	AncestralWeapons []string
 
-	// An array of House ids that was founded from this house.
+	// An array of Houses ids that was founded from this house.
 	CadetBranchesIds []int
 
 	// An array of Character ids that are sworn to this house.
 	SwornMembersIds []int
-}
-
-type HouseResponse struct {
-	// TODO: add links functionality to next, prev, first, last
-	Data []House
 }
 
 type house struct {
@@ -101,12 +98,24 @@ func (h house) Convert() House {
 	return house
 }
 
-type housesResponse []house
+type housesResponse struct {
+	links map[string]string
+
+	Houses []house
+}
+
+func (housesResponse *housesResponse) Link(links map[string]string) {
+	housesResponse.links = links
+}
+
+func (housesResponse *housesResponse) UnmarshalJSON(data []byte) error {
+	return json.Unmarshal(data, &housesResponse.Houses)
+}
 
 func (housesResponse housesResponse) Convert() []House {
 	houses := []House{}
 
-	for _, houseResponse := range housesResponse {
+	for _, houseResponse := range housesResponse.Houses {
 		houses = append(houses, houseResponse.Convert())
 	}
 

@@ -13,6 +13,9 @@ import (
 type CharacterRequest interface {
 	ParamConverter
 
+	// Limit sets the maximum characters to return.
+	Limit(int) CharacterRequest
+
 	// Name can be used to filter the returned characters by their name.
 	Name(string) CharacterRequest
 
@@ -37,10 +40,14 @@ type CharacterRequest interface {
 
 // NewCharacterRequest returns a new CharacterRequest which can be used to filter books.
 func NewCharacterRequest() CharacterRequest {
-	return characterRequest{}
+	c := characterRequest{}
+	c.limit = 10
+	return c
 }
 
 type characterRequest struct {
+	request
+
 	name    *string
 	gender  *string
 	culture *string
@@ -51,7 +58,11 @@ type characterRequest struct {
 
 func (request characterRequest) Convert() url.Values {
 	params := url.Values{}
+	params.Add("page", strconv.Itoa(request.limit))
 
+	if request.page != nil {
+		params.Set("pageSize", strconv.Itoa(*request.page))
+	}
 	if request.name != nil {
 		params.Set("name", *request.name)
 	}
@@ -72,6 +83,11 @@ func (request characterRequest) Convert() url.Values {
 	}
 
 	return params
+}
+
+func (request characterRequest) Limit(value int) CharacterRequest {
+	request.limit = value
+	return request
 }
 
 func (request characterRequest) Name(value string) CharacterRequest {

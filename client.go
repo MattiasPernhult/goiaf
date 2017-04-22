@@ -4,14 +4,10 @@
 
 package goiaf
 
-// TODO: add functionality to increase page size
-// TODO: add pagination functionality
 // TODO: add functionality for cache headers
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -26,7 +22,7 @@ type Client interface {
 	// Returns all books from the api. There is also the possibility
 	// to include filter parameters in your request. The possible filter
 	// parameters are exposed by the BookRequest interface.
-	Books(BookRequest) ([]Book, error)
+	Books(BookRequest) (BookResponse, error)
 
 	// Returns a specific book based on the id.
 	Book(int) (Book, error)
@@ -61,38 +57,43 @@ func NewClient() Client {
 	}
 }
 
-func (c *client) Books(request BookRequest) ([]Book, error) {
+func (c *client) Books(request BookRequest) (BookResponse, error) {
+	response := BookResponse{}
 	booksResponse := booksResponse{}
-	err := c.doRequest(booksEndpoint, request, &booksResponse)
+	err := c.get(booksEndpoint, request, &booksResponse)
 	if err != nil {
-		return nil, err
+		return response, err
 	}
 
-	return booksResponse.Convert(), nil
+	response.Data = booksResponse.Convert()
+	response.links = booksResponse.links
+
+	return response, nil
 }
 
 func (c *client) Book(id int) (Book, error) {
 	endpoint := fmt.Sprintf("%s/%d", booksEndpoint, id)
 
-	bookResponse := book{}
-	err := c.doRequest(endpoint, nil, &bookResponse)
+	book := book{}
+	err := c.get(endpoint, nil, &book)
 	if err != nil {
 		return Book{}, err
 	}
 
-	return bookResponse.Convert(), nil
+	return book.Convert(), nil
 }
 
 func (c *client) Characters(request CharacterRequest) (CharacterResponse, error) {
 	response := CharacterResponse{}
 	charactersResponse := charactersResponse{}
 
-	err := c.doRequest(charactersEndpoint, request, &charactersResponse)
+	err := c.get(charactersEndpoint, request, &charactersResponse)
 	if err != nil {
 		return response, err
 	}
 
 	response.Data = charactersResponse.Convert()
+	response.links = charactersResponse.links
 
 	return response, nil
 }
@@ -100,25 +101,26 @@ func (c *client) Characters(request CharacterRequest) (CharacterResponse, error)
 func (c *client) Character(id int) (Character, error) {
 	endpoint := fmt.Sprintf("%s/%d", charactersEndpoint, id)
 
-	characterResponse := character{}
-	err := c.doRequest(endpoint, nil, &characterResponse)
+	character := character{}
+	err := c.get(endpoint, nil, &character)
 	if err != nil {
 		return Character{}, err
 	}
 
-	return characterResponse.Convert(), nil
+	return character.Convert(), nil
 }
 
 func (c *client) Houses(request HouseRequest) (HouseResponse, error) {
 	response := HouseResponse{}
 	housesResponse := housesResponse{}
 
-	err := c.doRequest(housesEndpoint, request, &housesResponse)
+	err := c.get(housesEndpoint, request, &housesResponse)
 	if err != nil {
 		return response, err
 	}
 
 	response.Data = housesResponse.Convert()
+	response.links = housesResponse.links
 
 	return response, nil
 }
@@ -126,41 +128,11 @@ func (c *client) Houses(request HouseRequest) (HouseResponse, error) {
 func (c *client) House(id int) (House, error) {
 	endpoint := fmt.Sprintf("%s/%d", housesEndpoint, id)
 
-	houseResponse := house{}
-	err := c.doRequest(endpoint, nil, &houseResponse)
+	house := house{}
+	err := c.get(endpoint, nil, &house)
 	if err != nil {
 		return House{}, err
 	}
 
-	return houseResponse.Convert(), nil
-}
-
-func (c *client) doRequest(endpoint string, converter ParamConverter, data interface{}) error {
-	url := endpoint
-	if converter != nil {
-		url = fmt.Sprintf("%s?%s", endpoint, converter.Convert().Encode())
-	}
-
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return err
-	}
-	req.Close = true
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return ErrResourceNotFound
-	}
-
-	b, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(b, data)
+	return house.Convert(), nil
 }

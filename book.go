@@ -4,7 +4,10 @@
 
 package goiaf
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 // Book represents the book resources that is returned from the api.
 type Book struct {
@@ -76,12 +79,24 @@ func (b book) Convert() Book {
 	return book
 }
 
-type booksResponse []book
+type booksResponse struct {
+	links map[string]string
+
+	Books []book
+}
+
+func (booksResponse *booksResponse) Link(links map[string]string) {
+	booksResponse.links = links
+}
+
+func (booksResponse *booksResponse) UnmarshalJSON(data []byte) error {
+	return json.Unmarshal(data, &booksResponse.Books)
+}
 
 func (booksResponse booksResponse) Convert() []Book {
 	books := []Book{}
 
-	for _, bookResponse := range booksResponse {
+	for _, bookResponse := range booksResponse.Books {
 		books = append(books, bookResponse.Convert())
 	}
 
