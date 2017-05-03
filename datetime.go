@@ -36,6 +36,7 @@ func (dt *DateTime) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Value returns the underlying wrapped time object
 func (dt DateTime) Value() time.Time {
 	return dt.Time
 }
