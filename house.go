@@ -6,6 +6,7 @@ package goiaf
 
 import "encoding/json"
 
+// House represent the house resource in the api
 type House struct {
 	// The hypermedia URL of this resource.
 	URL string
@@ -29,19 +30,19 @@ type House struct {
 	Seats []string
 
 	// The Character id of this house's current lord.
-	CurrentLordId int
+	CurrentLordID int
 
 	// The Character id of this house's heir.
-	HeirId int
+	HeirID int
 
 	// The Houses id that this house answers to.
-	OverlordId int
+	OverlordID int
 
 	// The year that this house was founded.
 	Founded string
 
 	// The Character resource URL that founded this house.
-	FounderId int
+	FounderID int
 
 	// The year that this house died out.
 	DiedOut string
@@ -84,11 +85,11 @@ func (h house) Convert() House {
 		Words:            h.Words,
 		Titles:           h.Titles,
 		Seats:            h.Seats,
-		CurrentLordId:    h.CurrentLord.id(),
-		HeirId:           h.Heir.id(),
-		OverlordId:       h.Overlord.id(),
+		CurrentLordID:    h.CurrentLord.id(),
+		HeirID:           h.Heir.id(),
+		OverlordID:       h.Overlord.id(),
 		Founded:          h.Founded,
-		FounderId:        h.Founder.id(),
+		FounderID:        h.Founder.id(),
 		DiedOut:          h.DiedOut,
 		AncestralWeapons: h.AncestralWeapons,
 		CadetBranchesIds: h.CadetBranches.ids(),

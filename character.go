@@ -6,6 +6,7 @@ package goiaf
 
 import "encoding/json"
 
+// Character represent the character resource in the api
 type Character struct {
 	// The hypermedia URL of this resource.
 	URL string
@@ -33,13 +34,13 @@ type Character struct {
 	Aliases []string
 
 	// The character id of this character's father.
-	FatherId int
+	FatherID int
 
 	// The character id of this character's mother.
-	MotherId int
+	MotherID int
 
 	// The character id of this character's spouse.
-	SpouseId int
+	SpouseID int
 
 	// An array of Houses ids that this character is loyal to.
 	AllegianceIds []int
@@ -88,9 +89,9 @@ func (c character) Convert() Character {
 		Died:          c.Died,
 		Titles:        c.Titles,
 		Aliases:       c.Aliases,
-		FatherId:      c.Father.id(),
-		MotherId:      c.Mother.id(),
-		SpouseId:      c.Spouse.id(),
+		FatherID:      c.Father.id(),
+		MotherID:      c.Mother.id(),
+		SpouseID:      c.Spouse.id(),
 		AllegianceIds: c.Allegiances.ids(),
 		BookIds:       c.Books.ids(),
 		PovBookIds:    c.PovBooks.ids(),

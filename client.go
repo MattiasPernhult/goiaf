@@ -18,6 +18,8 @@ const (
 	housesEndpoint     string = baseURL + "/houses"
 )
 
+// Client interface which reflects the endpoint for the api.
+// All endpoints will be exposed with this client.
 type Client interface {
 	// Returns all books from the api. There is also the possibility
 	// to include filter parameters in your request. The possible filter
