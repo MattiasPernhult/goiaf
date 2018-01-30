@@ -14,6 +14,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
@@ -59,8 +60,9 @@ type client struct {
 // are exposed through this client.
 func NewClient() Client {
 	return &client{
-		// TODO: timeouts for the http client
-		httpClient: http.Client{},
+		httpClient: http.Client{
+			Timeout: time.Second * 15,
+		},
 	}
 }
 
