@@ -7,8 +7,13 @@ package goiaf
 // TODO: add functionality for cache headers
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -60,15 +65,16 @@ func NewClient() Client {
 }
 
 func (c *client) Books(request BookRequest) (BookResponse, error) {
-	response := BookResponse{}
 	booksResponse := booksResponse{}
 	err := c.get(booksEndpoint, request, &booksResponse)
 	if err != nil {
-		return response, err
+		return BookResponse{}, err
 	}
 
-	response.Data = booksResponse.Convert()
-	response.links = booksResponse.links
+	response := BookResponse{
+		Data:  booksResponse.Convert(),
+		links: booksResponse.links,
+	}
 
 	return response, nil
 }
@@ -86,16 +92,17 @@ func (c *client) Book(id int) (Book, error) {
 }
 
 func (c *client) Characters(request CharacterRequest) (CharacterResponse, error) {
-	response := CharacterResponse{}
 	charactersResponse := charactersResponse{}
 
 	err := c.get(charactersEndpoint, request, &charactersResponse)
 	if err != nil {
-		return response, err
+		return CharacterResponse{}, err
 	}
 
-	response.Data = charactersResponse.Convert()
-	response.links = charactersResponse.links
+	response := CharacterResponse{
+		Data:  charactersResponse.Convert(),
+		links: charactersResponse.links,
+	}
 
 	return response, nil
 }
@@ -113,16 +120,17 @@ func (c *client) Character(id int) (Character, error) {
 }
 
 func (c *client) Houses(request HouseRequest) (HouseResponse, error) {
-	response := HouseResponse{}
 	housesResponse := housesResponse{}
 
 	err := c.get(housesEndpoint, request, &housesResponse)
 	if err != nil {
-		return response, err
+		return HouseResponse{}, err
 	}
 
-	response.Data = housesResponse.Convert()
-	response.links = housesResponse.links
+	response := HouseResponse{
+		Data:  housesResponse.Convert(),
+		links: housesResponse.links,
+	}
 
 	return response, nil
 }
@@ -137,4 +145,91 @@ func (c *client) House(id int) (House, error) {
 	}
 
 	return house.Convert(), nil
+}
+
+func (c *client) get(endpoint string, converter ParamConverter, data interface{}) error {
+	if converter != nil {
+		endpoint = fmt.Sprintf("%s?%s", endpoint, converter.Convert().Encode())
+	}
+
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return err
+	}
+	req.Close = true
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusNotFound {
+		return ErrResourceNotFound
+	}
+
+	if t, ok := data.(linker); ok {
+		t.Link(c.getLinks(resp.Header.Get("link")))
+	}
+
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(b, data)
+}
+
+func (c *client) getLinks(linkHeader string) map[string]string {
+	result := map[string]string{}
+	if linkHeader == "" {
+		return result
+	}
+
+	links := strings.Split(linkHeader, ",")
+	for _, link := range links {
+		link = strings.TrimSpace(link)
+		linkPair := strings.Split(link, ";")
+
+		urlStr := strings.TrimSpace(linkPair[0])
+		rel := strings.Replace(strings.TrimSpace(linkPair[1]), "rel=", "", 1)
+
+		urlStr = urlStr[1 : len(urlStr)-1]
+		rel = rel[1 : len(rel)-1]
+
+		result[rel] = urlStr
+	}
+
+	return result
+}
+
+func getQueryFromURL(urlStr string) (url.Values, error) {
+	if urlStr == "" {
+		return nil, ErrNoResultSet
+	}
+
+	u, err := url.ParseRequestURI(urlStr)
+	if err != nil {
+		return nil, err
+	}
+
+	return u.Query(), nil
+}
+
+func getPageInfo(query url.Values) (int, int, error) {
+	pageStr, pageSizeStr := query.Get("page"), query.Get("pageSize")
+	if pageStr == "" || pageSizeStr == "" {
+		return 0, 0, ErrPaginationInfoMissing
+	}
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		return 0, 0, err
+	}
+	pageSize, err := strconv.Atoi(pageSizeStr)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return page, pageSize, nil
 }
