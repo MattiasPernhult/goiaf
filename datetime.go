@@ -6,9 +6,8 @@ package goiaf
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 var unmarshalDTLayout = "2006-01-02T15:04:05"
