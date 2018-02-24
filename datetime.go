@@ -10,7 +10,9 @@ import (
 	"time"
 )
 
-var unmarshalDTLayout = "2006-01-02T15:04:05"
+const (
+	unmarshalDTLayout = "2006-01-02T15:04:05"
+)
 
 // DateTime is a wrapper around time.Time to be able to do proper format for the value.
 type DateTime struct {
